@@ -415,11 +415,6 @@
             justify-content: center;
             overflow: hidden;
             cursor: pointer;
-            transition: transform 0.15s ease;
-        }
-
-        .sample-box:hover {
-            transform: scale(1.02);
         }
 
         .sample-box img {
@@ -450,7 +445,6 @@
             font-size: 13px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s ease;
         }
 
         .btn-more:hover {
@@ -460,14 +454,11 @@
         img, .sample-box {
             -webkit-touch-callout: none !important;
             -webkit-user-select: none !important;
-            -khtml-user-select: none !important;
-            -moz-user-select: none !important;
-            -ms-user-select: none !important;
             user-select: none !important;
             -webkit-user-drag: none !important;
         }
 
-        /* 클릭한 위치에서 부드럽게 커지는 모달 스타일 */
+        /* 깔끔하고 심플한 네모 박스 형태의 모달 팝업 */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -475,33 +466,22 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-color: rgba(0, 0, 0, 0.85);
+            background-color: rgba(0, 0, 0, 0.7);
             z-index: 99999;
-            backdrop-filter: blur(3px);
             justify-content: center;
             align-items: center;
             cursor: pointer;
         }
 
         .modal-content {
-            max-width: 85vw;
+            max-width: 80vw;
             max-height: 80vh;
+            background-color: #FFFFFF;
+            padding: 10px;
             border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             object-fit: contain;
             display: block;
-            transform-origin: center center;
-            animation: zoomFromClick 0.2s ease-out forwards;
-        }
-
-        @keyframes zoomFromClick {
-            from {
-                transform: scale(0.1);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
         }
 
         @media (max-width: 900px) {
@@ -725,18 +705,14 @@
         </div>
     </div>
 
+    <!-- 네모 팝업 모달 창 -->
     <div id="imgModal" class="modal-overlay" onclick="closeModal()">
         <img id="modalImg" class="modal-content" src="" alt="확대 이미지" oncontextmenu="return false;" ondragstart="return false;">
     </div>
 
 <script>
-document.addEventListener('contextmenu', function(e) {
-    e.preventDefault();
-}, false);
-
-document.addEventListener('dragstart', function(e) {
-    e.preventDefault();
-}, false);
+document.addEventListener('contextmenu', function(e) { e.preventDefault(); }, false);
+document.addEventListener('dragstart', function(e) { e.preventDefault(); }, false);
 
 const config = {
     defaultShowCount: 10,
@@ -780,7 +756,7 @@ function loadImagesDirect() {
 
             const box = document.createElement('div');
             box.className = 'sample-box';
-            box.onclick = function(e) { openModal(this, e); };
+            box.onclick = function() { openModal(this); };
 
             const imgTag = document.createElement('img');
             const primaryExt = item.ext.toUpperCase();
@@ -788,18 +764,15 @@ function loadImagesDirect() {
 
             imgTag.src = `./${item.path}/${i}.${primaryExt}`;
             imgTag.loading = "lazy";
-
             imgTag.setAttribute('oncontextmenu', 'return false;');
             imgTag.setAttribute('ondragstart', 'return false;');
 
-            // 에러 방지용: 느리게 로딩되거나 파일이 없어도 에러코드 없이 안전하게 처리
+            // 단순하게 대문자/소문자만 체크하고 실패 시 공백으로 둠
             imgTag.onerror = function() {
                 if (this.src.endsWith('.' + primaryExt)) {
                     this.src = `./${item.path}/${i}.${fallbackExt}`;
                 } else {
-                    // 대체 이미지가 없거나 최종 실패 시 조용히 숨김 처리 (에러 로그 방지)
                     this.onerror = null;
-                    box.style.display = 'none';
                 }
             };
 
@@ -837,21 +810,13 @@ function toggleMore(id, btn) {
     if (btn) btn.innerText = isShow ? '접기 ↑' : '더보기 ↓';
 }
 
-function openModal(element, event) {
+function openModal(element) {
     const img = element.querySelector('img');
     if (img && img.src) {
         const modal = document.getElementById('imgModal');
         const modalImg = document.getElementById('modalImg');
         if (modal && modalImg) {
             modalImg.src = img.src;
-
-            // 클릭한 이미지의 위치(getBoundingClientRect)를 기준으로 시작점 설정
-            const rect = element.getBoundingClientRect();
-            const startX = rect.left + rect.width / 2 - window.innerWidth / 2;
-            const startY = rect.top + rect.height / 2 - window.innerHeight / 2;
-
-            modalImg.style.transformOrigin = `calc(50% + ${-startX}px) calc(50% + ${-startY}px)`;
-
             modal.style.display = 'flex';
         }
     }
