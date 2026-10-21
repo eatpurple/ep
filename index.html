@@ -27,7 +27,6 @@
             flex-direction: column;
             align-items: center;
             gap: 30px;
-            /* 기존 800px에서 아트머그 최대 폭에 맞춘 1100px로 확장 */
             width: 100%;
             max-width: 1100px;
             margin: 0 auto;
@@ -387,7 +386,6 @@
             border-top: 1px dashed #DDD;
         }
 
-        /* PC 화면 기준 이모티콘 10열 나열 */
         .grid-responsive {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
@@ -398,7 +396,6 @@
             aspect-ratio: 1 / 1;
         }
 
-        /* 방송화면 등 가로형 작품용 그리드 (2열 / 16:9 비율) */
         .grid-wide {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -431,7 +428,6 @@
             object-fit: cover;
         }
 
-        /* 더보기 기능 */
         .more-content {
             display: none;
             margin-top: 8px;
@@ -461,7 +457,6 @@
             background-color: #E2DFFD;
         }
 
-        /* 이미지 우클릭 및 길게 누르기(다운로드) 차단 CSS */
         img, .sample-box {
             -webkit-touch-callout: none !important;
             -webkit-user-select: none !important;
@@ -472,7 +467,7 @@
             -webkit-user-drag: none !important;
         }
 
-        /* 확대 모달 화면 고정 */
+        /* 클릭한 위치에서 부드럽게 커지는 모달 스타일 */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -488,31 +483,27 @@
             cursor: pointer;
         }
 
-        .modal-container {
-            position: relative;
-            max-width: 90%;
-            max-height: 85vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            pointer-events: none;
-        }
-
         .modal-content {
             max-width: 85vw;
             max-height: 80vh;
             border-radius: 12px;
             object-fit: contain;
             display: block;
-            animation: zoomIn 0.15s ease-out;
+            transform-origin: center center;
+            animation: zoomFromClick 0.2s ease-out forwards;
         }
 
-        @keyframes zoomIn {
-            from { transform: scale(0.85); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+        @keyframes zoomFromClick {
+            from {
+                transform: scale(0.1);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
-        /* 화면 해상도별 가로 그리드 개수 맞춤 조절 */
         @media (max-width: 900px) {
             .grid-responsive { grid-template-columns: repeat(8, 1fr); }
         }
@@ -735,13 +726,10 @@
     </div>
 
     <div id="imgModal" class="modal-overlay" onclick="closeModal()">
-        <div class="modal-container" id="modalContainer">
-            <img id="modalImg" class="modal-content" src="" alt="확대 이미지" oncontextmenu="return false;" ondragstart="return false;">
-        </div>
+        <img id="modalImg" class="modal-content" src="" alt="확대 이미지" oncontextmenu="return false;" ondragstart="return false;">
     </div>
 
 <script>
-// 우클릭 / 드래그 차단
 document.addEventListener('contextmenu', function(e) {
     e.preventDefault();
 }, false);
@@ -792,7 +780,7 @@ function loadImagesDirect() {
 
             const box = document.createElement('div');
             box.className = 'sample-box';
-            box.onclick = function() { openModal(this); };
+            box.onclick = function(e) { openModal(this, e); };
 
             const imgTag = document.createElement('img');
             const primaryExt = item.ext.toUpperCase();
@@ -804,11 +792,14 @@ function loadImagesDirect() {
             imgTag.setAttribute('oncontextmenu', 'return false;');
             imgTag.setAttribute('ondragstart', 'return false;');
 
+            // 에러 방지용: 느리게 로딩되거나 파일이 없어도 에러코드 없이 안전하게 처리
             imgTag.onerror = function() {
                 if (this.src.endsWith('.' + primaryExt)) {
                     this.src = `./${item.path}/${i}.${fallbackExt}`;
                 } else {
-                    box.remove();
+                    // 대체 이미지가 없거나 최종 실패 시 조용히 숨김 처리 (에러 로그 방지)
+                    this.onerror = null;
+                    box.style.display = 'none';
                 }
             };
 
@@ -846,13 +837,21 @@ function toggleMore(id, btn) {
     if (btn) btn.innerText = isShow ? '접기 ↑' : '더보기 ↓';
 }
 
-function openModal(element) {
+function openModal(element, event) {
     const img = element.querySelector('img');
     if (img && img.src) {
         const modal = document.getElementById('imgModal');
         const modalImg = document.getElementById('modalImg');
         if (modal && modalImg) {
             modalImg.src = img.src;
+
+            // 클릭한 이미지의 위치(getBoundingClientRect)를 기준으로 시작점 설정
+            const rect = element.getBoundingClientRect();
+            const startX = rect.left + rect.width / 2 - window.innerWidth / 2;
+            const startY = rect.top + rect.height / 2 - window.innerHeight / 2;
+
+            modalImg.style.transformOrigin = `calc(50% + ${-startX}px) calc(50% + ${-startY}px)`;
+
             modal.style.display = 'flex';
         }
     }
