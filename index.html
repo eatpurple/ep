@@ -12,17 +12,15 @@
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
         }
 
+        /* iframe 내부에서 스크롤이 따로 돌지 않고 부모와 밀착되도록 설정 */
         html, body {
             width: 100%;
-            height: 100%;
             overflow-x: hidden;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
+            background-color: transparent;
         }
 
         body {
-            background-color: transparent;
-            padding: 40px 10px 20px 10px;
+            padding: 20px 10px 40px 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -458,12 +456,12 @@
             -webkit-user-drag: none !important;
         }
 
-        /* 1. 까만 화면 제거 및 2. 어두운 반투명 네모 팝업 스타일 */
+        /* 클릭한 위치에 뜨는 어두운 반투명 팝업 박스 */
         .modal-box {
             display: none;
-            position: absolute; /* 클릭한 작업물의 높이에 위치하도록 absolute 사용 */
+            position: absolute;
             z-index: 99999;
-            background-color: rgba(0, 0, 0, 0.75); /* 어두운 반투명 색상 */
+            background-color: rgba(0, 0, 0, 0.75);
             padding: 12px;
             border-radius: 12px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
@@ -559,11 +557,11 @@
         <div class="frame-header"><div class="frame-title-badge">이모티콘</div></div>
 
         <div class="tab-container" id="tab-group-1">
-            <button class="tab-btn active" onclick="switchTab('tab-group-1', 'content-group-1', 0)">글자티콘</button>
-            <button class="tab-btn" onclick="switchTab('tab-group-1', 'content-group-1', 1)">구독티콘</button>
-            <button class="tab-btn" onclick="switchTab('tab-group-1', 'content-group-1', 2)">움짤티콘</button>
-            <button class="tab-btn" onclick="switchTab('tab-group-1', 'content-group-1', 3)">뱃지</button>
-            <button class="tab-btn" onclick="switchTab('tab-group-1', 'content-group-1', 4)">OGQ</button>
+            <button class="tab-btn active" onclick="switchTab('tab-group-1', 'content-group-1', 0); sendHeight();">글자티콘</button>
+            <button class="tab-btn" onclick="switchTab('tab-group-1', 'content-group-1', 1); sendHeight();">구독티콘</button>
+            <button class="tab-btn" onclick="switchTab('tab-group-1', 'content-group-1', 2); sendHeight();">움짤티콘</button>
+            <button class="tab-btn" onclick="switchTab('tab-group-1', 'content-group-1', 3); sendHeight();">뱃지</button>
+            <button class="tab-btn" onclick="switchTab('tab-group-1', 'content-group-1', 4); sendHeight();">OGQ</button>
         </div>
 
         <div class="tab-content-wrapper" id="content-group-1">
@@ -629,9 +627,9 @@
         <div class="frame-header"><div class="frame-title-badge">방송화면 & 배너</div></div>
 
         <div class="tab-container" id="tab-group-2">
-            <button class="tab-btn active" onclick="switchTab('tab-group-2', 'content-group-2', 0)">방송화면 / 대기화면</button>
-            <button class="tab-btn" onclick="switchTab('tab-group-2', 'content-group-2', 1)">상단배너 / 채널아트</button>
-            <button class="tab-btn" onclick="switchTab('tab-group-2', 'content-group-2', 2)">하단배너</button>
+            <button class="tab-btn active" onclick="switchTab('tab-group-2', 'content-group-2', 0); sendHeight();">방송화면 / 대기화면</button>
+            <button class="tab-btn" onclick="switchTab('tab-group-2', 'content-group-2', 1); sendHeight();">상단배너 / 채널아트</button>
+            <button class="tab-btn" onclick="switchTab('tab-group-2', 'content-group-2', 2); sendHeight();">하단배너</button>
         </div>
 
         <div class="tab-content-wrapper" id="content-group-2">
@@ -669,10 +667,10 @@
         <div class="frame-header"><div class="frame-title-badge">시그니처 & 기타</div></div>
 
         <div class="tab-container" id="tab-group-3">
-            <button class="tab-btn active" onclick="switchTab('tab-group-3', 'content-group-3', 0)">시그니처풍선</button>
-            <button class="tab-btn" onclick="switchTab('tab-group-3', 'content-group-3', 1)">후원움짤</button>
-            <button class="tab-btn" onclick="switchTab('tab-group-3', 'content-group-3', 2)">짚톡</button>
-            <button class="tab-btn" onclick="switchTab('tab-group-3', 'content-group-3', 3)">채팅 아바타</button>
+            <button class="tab-btn active" onclick="switchTab('tab-group-3', 'content-group-3', 0); sendHeight();">시그니처풍선</button>
+            <button class="tab-btn" onclick="switchTab('tab-group-3', 'content-group-3', 1); sendHeight();">후원움짤</button>
+            <button class="tab-btn" onclick="switchTab('tab-group-3', 'content-group-3', 2); sendHeight();">짚톡</button>
+            <button class="tab-btn" onclick="switchTab('tab-group-3', 'content-group-3', 3); sendHeight();">채팅 아바타</button>
         </div>
 
         <div class="tab-content-wrapper" id="content-group-3">
@@ -765,7 +763,6 @@ function loadImagesDirect() {
             imgTag.setAttribute('oncontextmenu', 'return false;');
             imgTag.setAttribute('ondragstart', 'return false;');
 
-            // 단순 예외 처리 (에러 방지용)
             imgTag.onerror = function() {
                 if (this.src.endsWith('.' + primaryExt)) {
                     this.src = `./${item.path}/${i}.${fallbackExt}`;
@@ -782,9 +779,19 @@ function loadImagesDirect() {
             btnMore.style.display = (item.count > config.defaultShowCount) ? 'block' : 'none';
         }
     });
+
+    sendHeight();
 }
 
 document.addEventListener('DOMContentLoaded', loadImagesDirect);
+
+// 아트머그 부모 창으로 실제 높이를 쏴주는 핵심 꼼수 함수
+function sendHeight() {
+    setTimeout(() => {
+        const height = document.documentElement.scrollHeight || document.body.scrollHeight;
+        window.parent.postMessage({ type: 'setHeight', height: height }, '*');
+    }, 100);
+}
 
 function switchTab(groupId, contentId, index) {
     const tabContainer = document.getElementById(groupId);
@@ -798,6 +805,7 @@ function switchTab(groupId, contentId, index) {
         if (btn) btn.classList.toggle('active', i === index);
         if (panels[i]) panels[i].classList.toggle('active', i === index);
     });
+    sendHeight();
 }
 
 function toggleMore(id, btn) {
@@ -806,6 +814,7 @@ function toggleMore(id, btn) {
 
     const isShow = target.classList.toggle('show');
     if (btn) btn.innerText = isShow ? '접기 ↑' : '더보기 ↓';
+    sendHeight();
 }
 
 function openModal(element, event) {
@@ -816,7 +825,6 @@ function openModal(element, event) {
         if (modal && modalImg) {
             modalImg.src = img.src;
 
-            // 클릭한 작업물의 위치(좌표와 스크롤)를 정확히 계산
             const rect = element.getBoundingClientRect();
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
@@ -824,7 +832,6 @@ function openModal(element, event) {
             const topPos = rect.top + scrollTop;
             const leftPos = rect.left + scrollLeft;
 
-            // 해당 작업물 근처 위치에 팝업창 배치
             modal.style.top = (topPos - 10) + 'px';
             modal.style.left = (leftPos - 10) + 'px';
             modal.style.display = 'block';
