@@ -530,7 +530,7 @@
                 <span class="sparkle-item sparkle-3">✦</span>
                 <span class="sparkle-item sparkle-4">✧</span>
             </div>
-            <img src="me.png" alt="프로필" class="sparkle-profile-img" onerror="this.src='https://dummyimage.com/100x100/eceafe/9d96f4.png&text=me'">
+            <img src="./me.png" alt="프로필" class="sparkle-profile-img" onerror="this.onerror=null; this.src='./me.PNG';">
         </div>
         <div class="profile-info">
             <div class="profile-name">잇퍼플✦eatpurple</div>
@@ -789,14 +789,24 @@ function loadImagesDirect() {
             box.onclick = function() { openModal(this); };
 
             const imgTag = document.createElement('img');
-            imgTag.src = `https://eatpurple.github.io/eatpurple/${item.path}/${i}.${item.ext}`;
+            
+            // 상대 경로 사용
+            const primaryExt = item.ext.toUpperCase();
+            const fallbackExt = item.ext.toLowerCase();
+
+            imgTag.src = `./${item.path}/${i}.${primaryExt}`;
             imgTag.loading = "lazy";
 
             imgTag.setAttribute('oncontextmenu', 'return false;');
             imgTag.setAttribute('ondragstart', 'return false;');
 
+            // 대문자 확장자로 불렀다가 없으면 소문자로 교체, 둘 다 없으면 해당 박스 제거
             imgTag.onerror = function() {
-                box.remove();
+                if (this.src.endsWith('.' + primaryExt)) {
+                    this.src = `./${item.path}/${i}.${fallbackExt}`;
+                } else {
+                    box.remove();
+                }
             };
 
             box.appendChild(imgTag);
@@ -826,7 +836,7 @@ function switchTab(groupId, contentId, index) {
 function toggleMore(id, btn) {
     const target = document.getElementById(id);
     if (!target) return;
-    
+
     const isShow = target.classList.toggle('show');
     btn.innerText = isShow ? '접기 ↑' : '더보기 ↓';
 }
@@ -839,7 +849,6 @@ function openModal(element) {
 
         modalImg.src = img.src;
 
-        // 클릭 시점의 스크롤 위치(Y축)를 계산해서 해당 화면 위치에 모달 배치
         const currentScrollY = window.scrollY || document.documentElement.scrollTop;
         modal.style.top = currentScrollY + 'px';
 
