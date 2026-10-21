@@ -14,18 +14,22 @@
 
         html, body {
             width: 100%;
-            /* 초기 높이를 제한하여 아트머그의 자동 더보기 버튼 생성을 방지 */
-            overflow: hidden;
-            background-color: transparent;
+            height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         body {
-            padding: 60px 10px 20px 10px;
+            background-color: transparent;
+            padding: 40px 10px 20px 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 30px;
-            max-width: 800px;
+            /* 기존 800px에서 아트머그 최대 폭에 맞춘 1100px로 확장 */
+            width: 100%;
+            max-width: 1100px;
             margin: 0 auto;
             position: relative;
         }
@@ -383,16 +387,18 @@
             border-top: 1px dashed #DDD;
         }
 
+        /* PC 화면 기준 이모티콘 10열 나열 */
         .grid-responsive {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
-            gap: 6px;
+            gap: 8px;
         }
 
         .grid-responsive .sample-box {
             aspect-ratio: 1 / 1;
         }
 
+        /* 방송화면 등 가로형 작품용 그리드 (2열 / 16:9 비율) */
         .grid-wide {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -425,9 +431,10 @@
             object-fit: cover;
         }
 
+        /* 더보기 기능 */
         .more-content {
             display: none;
-            margin-top: 6px;
+            margin-top: 8px;
         }
 
         .more-content.show {
@@ -454,6 +461,7 @@
             background-color: #E2DFFD;
         }
 
+        /* 이미지 우클릭 및 길게 누르기(다운로드) 차단 CSS */
         img, .sample-box {
             -webkit-touch-callout: none !important;
             -webkit-user-select: none !important;
@@ -464,6 +472,7 @@
             -webkit-user-drag: none !important;
         }
 
+        /* 확대 모달 화면 고정 */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -503,17 +512,18 @@
             to { transform: scale(1); opacity: 1; }
         }
 
-        @media (max-width: 768px) {
+        /* 화면 해상도별 가로 그리드 개수 맞춤 조절 */
+        @media (max-width: 900px) {
             .grid-responsive { grid-template-columns: repeat(8, 1fr); }
         }
 
-        @media (max-width: 500px) {
+        @media (max-width: 600px) {
+            .grid-responsive { grid-template-columns: repeat(5, 1fr); gap: 4px; }
             .profile-card { flex-direction: column; text-align: center; padding-top: 0; }
             .sparkle-profile-wrapper { margin-top: -50px; }
             .profile-info { padding-top: 0; }
             .profile-name { justify-content: center; }
             .outer-frame { padding: 16px 10px; border-radius: 20px; }
-            .grid-responsive { grid-template-columns: repeat(5, 1fr); gap: 4px; }
             .grid-wide { grid-template-columns: 1fr; gap: 8px; }
             .tab-btn { padding: 8px 12px; font-size: 13px; }
             .process-flow { grid-template-columns: repeat(2, 1fr); gap: 8px; }
@@ -731,6 +741,7 @@
     </div>
 
 <script>
+// 우클릭 / 드래그 차단
 document.addEventListener('contextmenu', function(e) {
     e.preventDefault();
 }, false);
@@ -809,29 +820,9 @@ function loadImagesDirect() {
             btnMore.style.display = (item.count > config.defaultShowCount) ? 'block' : 'none';
         }
     });
-
-    // 이미지 로딩 준비 후 높이 전송
-    sendHeightToParent();
 }
 
-function sendHeightToParent() {
-    const realHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
-    // 아트머그 부모 창으로 높이 신호 전달
-    window.parent.postMessage({
-        type: 'resize',
-        height: realHeight,
-        iframeHeight: realHeight
-    }, '*');
-}
-
-// 아트머그 자동 [더보기] 감지를 속이기 위해 초기 높이를 전달한 뒤 
-// 0.2초 후에 전체 실제 높이로 프레임을 자연스럽게 늘려줍니다.
-document.addEventListener('DOMContentLoaded', function() {
-    loadImagesDirect();
-    setTimeout(sendHeightToParent, 200);
-});
-
-window.addEventListener('load', sendHeightToParent);
+document.addEventListener('DOMContentLoaded', loadImagesDirect);
 
 function switchTab(groupId, contentId, index) {
     const tabContainer = document.getElementById(groupId);
@@ -845,8 +836,6 @@ function switchTab(groupId, contentId, index) {
         if (btn) btn.classList.toggle('active', i === index);
         if (panels[i]) panels[i].classList.toggle('active', i === index);
     });
-    
-    setTimeout(sendHeightToParent, 100);
 }
 
 function toggleMore(id, btn) {
@@ -855,8 +844,6 @@ function toggleMore(id, btn) {
 
     const isShow = target.classList.toggle('show');
     if (btn) btn.innerText = isShow ? '접기 ↑' : '더보기 ↓';
-    
-    setTimeout(sendHeightToParent, 150);
 }
 
 function openModal(element) {
