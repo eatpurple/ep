@@ -859,6 +859,44 @@ function openModal(element) {
 function closeModal() {
     document.getElementById('imgModal').style.display = 'none';
 }
+
+// --- [아트머그 iframe 높이 자동 조절 스크립트] ---
+function sendHeightToParent() {
+    // 현재 페이지의 전체 실제 높이 계산
+    const bodyHeight = document.body.scrollHeight;
+    const docHeight = document.documentElement.scrollHeight;
+    const realHeight = Math.max(bodyHeight, docHeight);
+
+    // 아트머그 및 상위 프레임(postMessage)으로 높이 전달
+    window.parent.postMessage({
+        type: 'resize',
+        height: realHeight,
+        iframeHeight: realHeight
+    }, '*');
+}
+
+// 1. 페이지 로딩이 완료되었을 때 높이 계산
+window.addEventListener('load', sendHeightToParent);
+
+// 2. 이미지가 늦게 로드되거나 탭/더보기 동작 시 높이 재계산
+const resizeObserver = new ResizeObserver(() => {
+    sendHeightToParent();
+});
+resizeObserver.observe(document.body);
+
+// 3. 기존 탭 전환 및 더보기 버튼 클릭 시에도 높이 전송 트리거 적용
+const originalSwitchTab = window.switchTab;
+window.switchTab = function(groupId, contentId, index) {
+    originalSwitchTab(groupId, contentId, index);
+    setTimeout(sendHeightToParent, 100);
+};
+
+const originalToggleMore = window.toggleMore;
+window.toggleMore = function(id, btn) {
+    originalToggleMore(id, btn);
+    setTimeout(sendHeightToParent, 150);
+};
+
 </script>
 
 </body>
