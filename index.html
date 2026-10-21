@@ -12,15 +12,17 @@
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
         }
 
-        /* iframe 내부에서 스크롤이 따로 돌지 않고 부모와 밀착되도록 설정 */
         html, body {
             width: 100%;
+            height: 100%;
             overflow-x: hidden;
-            background-color: transparent;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         body {
-            padding: 20px 10px 40px 10px;
+            background-color: transparent;
+            padding: 40px 10px 20px 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -456,7 +458,7 @@
             -webkit-user-drag: none !important;
         }
 
-        /* 클릭한 위치에 뜨는 어두운 반투명 팝업 박스 */
+        /* 클릭한 위치에 뜨는 어두운 반투명 팝업 박스 (사이즈 원본 통일 및 어디를 눌러도 닫힘) */
         .modal-box {
             display: none;
             position: absolute;
@@ -466,14 +468,11 @@
             border-radius: 12px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
             cursor: pointer;
-            max-width: 90%;
         }
 
         .modal-box img {
-            max-width: 400px;
-            max-height: 400px;
-            width: 100%;
-            height: auto;
+            width: 300px;  /* 모든 팝업 이미지가 동일한 사이즈로 뜨도록 고정 */
+            height: 300px;
             border-radius: 8px;
             display: block;
             object-fit: contain;
@@ -493,11 +492,11 @@
             .grid-wide { grid-template-columns: 1fr; gap: 8px; }
             .tab-btn { padding: 8px 12px; font-size: 13px; }
             .process-flow { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-            .modal-box img { max-width: 280px; max-height: 280px; }
+            .modal-box img { width: 220px; height: 220px; }
         }
     </style>
 </head>
-<body>
+<body onclick="closeModalOnBody(event)">
 
     <div class="profile-card">
         <div class="sparkle-profile-wrapper">
@@ -701,8 +700,8 @@
         </div>
     </div>
 
-    <!-- 클릭한 위치에 뜨는 어두운 반투명 팝업 박스 -->
-    <div id="imgModal" class="modal-box" onclick="closeModal()">
+    <!-- 팝업 박스 -->
+    <div id="imgModal" class="modal-box">
         <img id="modalImg" src="" alt="확대 이미지" oncontextmenu="return false;" ondragstart="return false;">
     </div>
 
@@ -752,7 +751,11 @@ function loadImagesDirect() {
 
             const box = document.createElement('div');
             box.className = 'sample-box';
-            box.onclick = function(e) { openModal(this, e); };
+            // 클릭 시 이벤트 전파를 막아 부모(body)의 닫기 기능과 충돌 방지
+            box.onclick = function(e) { 
+                e.stopPropagation();
+                openModal(this, e); 
+            };
 
             const imgTag = document.createElement('img');
             const primaryExt = item.ext.toUpperCase();
@@ -785,7 +788,6 @@ function loadImagesDirect() {
 
 document.addEventListener('DOMContentLoaded', loadImagesDirect);
 
-// 아트머그 부모 창으로 실제 높이를 쏴주는 핵심 꼼수 함수
 function sendHeight() {
     setTimeout(() => {
         const height = document.documentElement.scrollHeight || document.body.scrollHeight;
@@ -839,9 +841,12 @@ function openModal(element, event) {
     }
 }
 
-function closeModal() {
+// 화면 아무 곳이나 누르면 팝업이 닫히도록 설정
+function closeModalOnBody(event) {
     const modal = document.getElementById('imgModal');
-    if (modal) modal.style.display = 'none';
+    if (modal && modal.style.display === 'block') {
+        modal.style.display = 'none';
+    }
 }
 </script>
 
