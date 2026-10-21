@@ -458,30 +458,27 @@
             -webkit-user-drag: none !important;
         }
 
-        /* 깔끔하고 심플한 네모 박스 형태의 모달 팝업 */
-        .modal-overlay {
+        /* 1. 까만 화면 제거 및 2. 어두운 반투명 네모 팝업 스타일 */
+        .modal-box {
             display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(0, 0, 0, 0.7);
+            position: absolute; /* 클릭한 작업물의 높이에 위치하도록 absolute 사용 */
             z-index: 99999;
-            justify-content: center;
-            align-items: center;
+            background-color: rgba(0, 0, 0, 0.75); /* 어두운 반투명 색상 */
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
             cursor: pointer;
+            max-width: 90%;
         }
 
-        .modal-content {
-            max-width: 80vw;
-            max-height: 80vh;
-            background-color: #FFFFFF;
-            padding: 10px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            object-fit: contain;
+        .modal-box img {
+            max-width: 400px;
+            max-height: 400px;
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
             display: block;
+            object-fit: contain;
         }
 
         @media (max-width: 900px) {
@@ -498,6 +495,7 @@
             .grid-wide { grid-template-columns: 1fr; gap: 8px; }
             .tab-btn { padding: 8px 12px; font-size: 13px; }
             .process-flow { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .modal-box img { max-width: 280px; max-height: 280px; }
         }
     </style>
 </head>
@@ -705,9 +703,9 @@
         </div>
     </div>
 
-    <!-- 네모 팝업 모달 창 -->
-    <div id="imgModal" class="modal-overlay" onclick="closeModal()">
-        <img id="modalImg" class="modal-content" src="" alt="확대 이미지" oncontextmenu="return false;" ondragstart="return false;">
+    <!-- 클릭한 위치에 뜨는 어두운 반투명 팝업 박스 -->
+    <div id="imgModal" class="modal-box" onclick="closeModal()">
+        <img id="modalImg" src="" alt="확대 이미지" oncontextmenu="return false;" ondragstart="return false;">
     </div>
 
 <script>
@@ -756,7 +754,7 @@ function loadImagesDirect() {
 
             const box = document.createElement('div');
             box.className = 'sample-box';
-            box.onclick = function() { openModal(this); };
+            box.onclick = function(e) { openModal(this, e); };
 
             const imgTag = document.createElement('img');
             const primaryExt = item.ext.toUpperCase();
@@ -767,7 +765,7 @@ function loadImagesDirect() {
             imgTag.setAttribute('oncontextmenu', 'return false;');
             imgTag.setAttribute('ondragstart', 'return false;');
 
-            // 단순하게 대문자/소문자만 체크하고 실패 시 공백으로 둠
+            // 단순 예외 처리 (에러 방지용)
             imgTag.onerror = function() {
                 if (this.src.endsWith('.' + primaryExt)) {
                     this.src = `./${item.path}/${i}.${fallbackExt}`;
@@ -810,14 +808,26 @@ function toggleMore(id, btn) {
     if (btn) btn.innerText = isShow ? '접기 ↑' : '더보기 ↓';
 }
 
-function openModal(element) {
+function openModal(element, event) {
     const img = element.querySelector('img');
     if (img && img.src) {
         const modal = document.getElementById('imgModal');
         const modalImg = document.getElementById('modalImg');
         if (modal && modalImg) {
             modalImg.src = img.src;
-            modal.style.display = 'flex';
+
+            // 클릭한 작업물의 위치(좌표와 스크롤)를 정확히 계산
+            const rect = element.getBoundingClientRect();
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+            const topPos = rect.top + scrollTop;
+            const leftPos = rect.left + scrollLeft;
+
+            // 해당 작업물 근처 위치에 팝업창 배치
+            modal.style.top = (topPos - 10) + 'px';
+            modal.style.left = (leftPos - 10) + 'px';
+            modal.style.display = 'block';
         }
     }
 }
