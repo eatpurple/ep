@@ -12,6 +12,14 @@
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
         }
 
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
         body {
             background-color: transparent;
             padding: 60px 10px 20px 10px;
@@ -19,11 +27,9 @@
             flex-direction: column;
             align-items: center;
             gap: 30px;
-            width: 100%;
             max-width: 800px;
             margin: 0 auto;
             position: relative;
-            overflow: hidden; /* iframe 이중 스크롤 방지 */
         }
 
         /* 프로필 섹션 */
@@ -379,7 +385,6 @@
             border-top: 1px dashed #DDD;
         }
 
-        /* 기본 정사각형 이모티콘 샘플 그리드 (10열) */
         .grid-responsive {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
@@ -390,7 +395,6 @@
             aspect-ratio: 1 / 1;
         }
 
-        /* 방송화면 등 가로형 작품용 그리드 (2열 / 16:9 비율) */
         .grid-wide {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -423,7 +427,6 @@
             object-fit: cover;
         }
 
-        /* 더보기 기능 */
         .more-content {
             display: none;
             margin-top: 6px;
@@ -453,7 +456,6 @@
             background-color: #E2DFFD;
         }
 
-        /* 이미지 우클릭 및 길게 누르기(다운로드) 차단 CSS */
         img, .sample-box {
             -webkit-touch-callout: none !important;
             -webkit-user-select: none !important;
@@ -464,12 +466,12 @@
             -webkit-user-drag: none !important;
         }
 
-        /* 클릭 스크롤 위치 맞춤형 모달 */
         .modal-overlay {
             display: none;
-            position: absolute; /* fixed 대신 absolute 사용하여 해당위치에 표출 */
+            position: fixed;
+            top: 0;
             left: 0;
-            width: 100%;
+            width: 100vw;
             height: 100vh;
             background-color: rgba(0, 0, 0, 0.85);
             z-index: 99999;
@@ -731,7 +733,6 @@
     </div>
 
 <script>
-// 전체 페이지 우클릭 및 드래그 방지
 document.addEventListener('contextmenu', function(e) {
     e.preventDefault();
 }, false);
@@ -743,12 +744,10 @@ document.addEventListener('dragstart', function(e) {
 const config = {
     defaultShowCount: 10,
     items: [
-        /* 1단락 */
         { mainId: 'grid-texticon-main', moreId: 'more-texticon', btnId: 'btn-texticon', path: 'img/texticon', count: 10, ext: 'PNG' },
         { mainId: 'grid-texticon-gif-main', moreId: 'more-texticon-gif', btnId: 'btn-texticon-gif', path: 'img/texticon_gif', count: 10, ext: 'GIF' },
         { mainId: 'grid-subicon-main', moreId: 'more-subicon', btnId: 'btn-subicon', path: 'img/subicon', count: 185, ext: 'PNG' },
 
-        /* 움짤티콘 */
         { mainId: 'grid-gificon-mini-main', moreId: 'more-gificon-mini', btnId: 'btn-gificon-mini', path: 'img/gifcon_mini', count: 13, ext: 'GIF' },
         { mainId: 'grid-gificon-basic-main', moreId: 'more-gificon-basic', btnId: 'btn-gificon-basic', path: 'img/gifcon_basic', count: 92, ext: 'GIF' },
         { mainId: 'grid-gificon-complex-main', moreId: 'more-gificon-complex', btnId: 'btn-gificon-complex', path: 'img/gifcon_complex', count: 27, ext: 'GIF' },
@@ -756,13 +755,11 @@ const config = {
         { mainId: 'grid-badge-main', moreId: 'more-badge', btnId: 'btn-badge', path: 'img/badge', count: 7, ext: 'PNG' },
         { mainId: 'grid-ogq-main', moreId: 'more-ogq', btnId: 'btn-ogq', path: 'img/ogq', count: 0, ext: 'PNG' },
 
-        /* 2단락 - 방송화면/배너 */
         { mainId: 'grid-screen-main', moreId: 'more-screen', btnId: 'btn-screen', path: 'img/screen', count: 6, ext: 'PNG' },
         { mainId: 'grid-screen-b-main', moreId: 'more-screen-b', btnId: 'btn-screen-b', path: 'img/screen_b', count: 4, ext: 'PNG' },
         { mainId: 'grid-topbanner-main', moreId: 'more-topbanner', btnId: 'btn-topbanner', path: 'img/topbanner', count: 0, ext: 'PNG' },
         { mainId: 'grid-botbanner-main', moreId: 'more-botbanner', btnId: 'btn-botbanner', path: 'img/botbanner', count: 0, ext: 'PNG' },
 
-        /* 3단락 */
         { mainId: 'grid-balloon-main', moreId: 'more-balloon', btnId: 'btn-balloon', path: 'img/balloon', count: 51, ext: 'PNG' },
         { mainId: 'grid-gifanim-main', moreId: 'more-gifanim', btnId: 'btn-gifanim', path: 'img/gifanim', count: 16, ext: 'GIF' },
         { mainId: 'grid-ziptok-main', moreId: 'more-ziptok', btnId: 'btn-ziptok', path: 'img/ziptok', count: 10, ext: 'GIF' },
@@ -789,8 +786,6 @@ function loadImagesDirect() {
             box.onclick = function() { openModal(this); };
 
             const imgTag = document.createElement('img');
-            
-            // 상대 경로 사용
             const primaryExt = item.ext.toUpperCase();
             const fallbackExt = item.ext.toLowerCase();
 
@@ -800,7 +795,6 @@ function loadImagesDirect() {
             imgTag.setAttribute('oncontextmenu', 'return false;');
             imgTag.setAttribute('ondragstart', 'return false;');
 
-            // 대문자 확장자로 불렀다가 없으면 소문자로 교체, 둘 다 없으면 해당 박스 제거
             imgTag.onerror = function() {
                 if (this.src.endsWith('.' + primaryExt)) {
                     this.src = `./${item.path}/${i}.${fallbackExt}`;
@@ -823,13 +817,15 @@ document.addEventListener('DOMContentLoaded', loadImagesDirect);
 
 function switchTab(groupId, contentId, index) {
     const tabContainer = document.getElementById(groupId);
+    if (!tabContainer) return;
     const buttons = tabContainer.querySelectorAll('.tab-btn');
     const contentWrapper = document.getElementById(contentId);
+    if (!contentWrapper) return;
     const panels = contentWrapper.querySelectorAll('.tab-panel');
 
     buttons.forEach((btn, i) => {
-        btn.classList.toggle('active', i === index);
-        panels[i].classList.toggle('active', i === index);
+        if (btn) btn.classList.toggle('active', i === index);
+        if (panels[i]) panels[i].classList.toggle('active', i === index);
     });
 }
 
@@ -838,7 +834,7 @@ function toggleMore(id, btn) {
     if (!target) return;
 
     const isShow = target.classList.toggle('show');
-    btn.innerText = isShow ? '접기 ↑' : '더보기 ↓';
+    if (btn) btn.innerText = isShow ? '접기 ↑' : '더보기 ↓';
 }
 
 function openModal(element) {
@@ -846,57 +842,17 @@ function openModal(element) {
     if (img && img.src) {
         const modal = document.getElementById('imgModal');
         const modalImg = document.getElementById('modalImg');
-
-        modalImg.src = img.src;
-
-        const currentScrollY = window.scrollY || document.documentElement.scrollTop;
-        modal.style.top = currentScrollY + 'px';
-
-        modal.style.display = 'flex';
+        if (modal && modalImg) {
+            modalImg.src = img.src;
+            modal.style.display = 'flex';
+        }
     }
 }
 
 function closeModal() {
-    document.getElementById('imgModal').style.display = 'none';
+    const modal = document.getElementById('imgModal');
+    if (modal) modal.style.display = 'none';
 }
-
-// --- [아트머그 iframe 높이 자동 조절 스크립트] ---
-function sendHeightToParent() {
-    // 현재 페이지의 전체 실제 높이 계산
-    const bodyHeight = document.body.scrollHeight;
-    const docHeight = document.documentElement.scrollHeight;
-    const realHeight = Math.max(bodyHeight, docHeight);
-
-    // 아트머그 및 상위 프레임(postMessage)으로 높이 전달
-    window.parent.postMessage({
-        type: 'resize',
-        height: realHeight,
-        iframeHeight: realHeight
-    }, '*');
-}
-
-// 1. 페이지 로딩이 완료되었을 때 높이 계산
-window.addEventListener('load', sendHeightToParent);
-
-// 2. 이미지가 늦게 로드되거나 탭/더보기 동작 시 높이 재계산
-const resizeObserver = new ResizeObserver(() => {
-    sendHeightToParent();
-});
-resizeObserver.observe(document.body);
-
-// 3. 기존 탭 전환 및 더보기 버튼 클릭 시에도 높이 전송 트리거 적용
-const originalSwitchTab = window.switchTab;
-window.switchTab = function(groupId, contentId, index) {
-    originalSwitchTab(groupId, contentId, index);
-    setTimeout(sendHeightToParent, 100);
-};
-
-const originalToggleMore = window.toggleMore;
-window.toggleMore = function(id, btn) {
-    originalToggleMore(id, btn);
-    setTimeout(sendHeightToParent, 150);
-};
-
 </script>
 
 </body>
