@@ -386,13 +386,21 @@
             border-top: 1px dashed #DDD;
         }
 
+        /* 일반 이모티콘 등 (가로 10개) */
         .grid-responsive {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
             gap: 8px;
         }
 
-        .grid-responsive .sample-box {
+        /* 시그니처 & 기타 단락 전용 (가로 6개) */
+        .grid-six {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+        }
+
+        .grid-responsive .sample-box, .grid-six .sample-box {
             aspect-ratio: 1 / 1;
         }
 
@@ -406,6 +414,7 @@
             aspect-ratio: 16 / 9;
         }
 
+        /* 샘플 박스 (클릭 시 어두운 회색 배경 하이라이트 적용) */
         .sample-box {
             background-color: #F8F9FA;
             border-radius: 8px;
@@ -415,12 +424,22 @@
             justify-content: center;
             overflow: hidden;
             cursor: pointer;
+            position: relative;
+            transition: all 0.15s ease;
         }
 
+        .sample-box.highlighted {
+            background-color: rgba(0, 0, 0, 0.6) !important;
+            border-color: #333 !important;
+        }
+
+        /* 이미지 원본 비율 유지 (contain) */
         .sample-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
         }
 
         .more-content {
@@ -458,32 +477,14 @@
             -webkit-user-drag: none !important;
         }
 
-        /* 클릭한 위치에 뜨는 어두운 반투명 팝업 박스 (사이즈 원본 통일 및 어디를 눌러도 닫힘) */
-        .modal-box {
-            display: none;
-            position: absolute;
-            z-index: 99999;
-            background-color: rgba(0, 0, 0, 0.75);
-            padding: 12px;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-            cursor: pointer;
-        }
-
-        .modal-box img {
-            width: 300px;  /* 모든 팝업 이미지가 동일한 사이즈로 뜨도록 고정 */
-            height: 300px;
-            border-radius: 8px;
-            display: block;
-            object-fit: contain;
-        }
-
         @media (max-width: 900px) {
             .grid-responsive { grid-template-columns: repeat(8, 1fr); }
+            .grid-six { grid-template-columns: repeat(5, 1fr); }
         }
 
         @media (max-width: 600px) {
             .grid-responsive { grid-template-columns: repeat(5, 1fr); gap: 4px; }
+            .grid-six { grid-template-columns: repeat(3, 1fr); gap: 4px; }
             .profile-card { flex-direction: column; text-align: center; padding-top: 0; }
             .sparkle-profile-wrapper { margin-top: -50px; }
             .profile-info { padding-top: 0; }
@@ -492,11 +493,10 @@
             .grid-wide { grid-template-columns: 1fr; gap: 8px; }
             .tab-btn { padding: 8px 12px; font-size: 13px; }
             .process-flow { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-            .modal-box img { width: 220px; height: 220px; }
         }
     </style>
 </head>
-<body onclick="closeModalOnBody(event)">
+<body onclick="clearHighlights(event)">
 
     <div class="profile-card">
         <div class="sparkle-profile-wrapper">
@@ -673,36 +673,32 @@
         </div>
 
         <div class="tab-content-wrapper" id="content-group-3">
+            <!-- 시그니처 & 기타 단락은 grid-six 클래스를 적용하여 가로 6개씩 정렬 -->
             <div class="tab-panel active">
                 <div class="header-group"><div class="price-text">개당 2.0</div></div>
-                <div class="grid-responsive" id="grid-balloon-main"></div>
-                <div class="grid-responsive more-content" id="more-balloon"></div>
+                <div class="grid-six" id="grid-balloon-main"></div>
+                <div class="grid-six more-content" id="more-balloon"></div>
                 <button class="btn-more" id="btn-balloon" onclick="toggleMore('more-balloon', this)">더보기 ↓</button>
             </div>
             <div class="tab-panel">
                 <div class="header-group"><div class="price-text">개당 5.0 ~</div></div>
-                <div class="grid-responsive" id="grid-gifanim-main"></div>
-                <div class="grid-responsive more-content" id="more-gifanim"></div>
+                <div class="grid-six" id="grid-gifanim-main"></div>
+                <div class="grid-six more-content" id="more-gifanim"></div>
                 <button class="btn-more" id="btn-gifanim" onclick="toggleMore('more-gifanim', this)">더보기 ↓</button>
             </div>
             <div class="tab-panel">
                 <div class="header-group"><div class="price-text">개당 3.0</div></div>
-                <div class="grid-responsive" id="grid-ziptok-main"></div>
-                <div class="grid-responsive more-content" id="more-ziptok"></div>
+                <div class="grid-six" id="grid-ziptok-main"></div>
+                <div class="grid-six more-content" id="more-ziptok"></div>
                 <button class="btn-more" id="btn-ziptok" onclick="toggleMore('more-ziptok', this)">더보기 ↓</button>
             </div>
             <div class="tab-panel">
                 <div class="header-group"><div class="price-text">개당 4.0</div></div>
-                <div class="grid-responsive" id="grid-avatar-main"></div>
-                <div class="grid-responsive more-content" id="more-avatar"></div>
+                <div class="grid-six" id="grid-avatar-main"></div>
+                <div class="grid-six more-content" id="more-avatar"></div>
                 <button class="btn-more" id="btn-avatar" onclick="toggleMore('more-avatar', this)">더보기 ↓</button>
             </div>
         </div>
-    </div>
-
-    <!-- 팝업 박스 -->
-    <div id="imgModal" class="modal-box">
-        <img id="modalImg" src="" alt="확대 이미지" oncontextmenu="return false;" ondragstart="return false;">
     </div>
 
 <script>
@@ -730,7 +726,7 @@ const config = {
 
         { mainId: 'grid-balloon-main', moreId: 'more-balloon', btnId: 'btn-balloon', path: 'img/balloon', count: 51, ext: 'PNG' },
         { mainId: 'grid-gifanim-main', moreId: 'more-gifanim', btnId: 'btn-gifanim', path: 'img/gifanim', count: 16, ext: 'GIF' },
-        { mainId: 'grid-ziptok-main', moreId: 'more-ziptok', btnId: 'btn-ziptok', path: 'img/ziptok', count: 10, ext: 'GIF' },
+        { mainId: 'grid-ziptok-main', moreId: 'more-ziptok', btnId: 'btn-ziptok', path: 'btn-ziptok', path: 'img/ziptok', count: 10, ext: 'GIF' },
         { mainId: 'grid-avatar-main', moreId: 'more-avatar', btnId: 'btn-avatar', path: 'img/avatar', count: 5, ext: 'GIF' }
     ]
 };
@@ -751,10 +747,12 @@ function loadImagesDirect() {
 
             const box = document.createElement('div');
             box.className = 'sample-box';
-            // 클릭 시 이벤트 전파를 막아 부모(body)의 닫기 기능과 충돌 방지
+            
+            // 클릭 시 해당 박스만 어두운 회색으로 하이라이트 전환 (다른 박스 선택 시 해제)
             box.onclick = function(e) { 
                 e.stopPropagation();
-                openModal(this, e); 
+                document.querySelectorAll('.sample-box').forEach(b => b.classList.remove('highlighted'));
+                box.classList.add('highlighted');
             };
 
             const imgTag = document.createElement('img');
@@ -819,34 +817,9 @@ function toggleMore(id, btn) {
     sendHeight();
 }
 
-function openModal(element, event) {
-    const img = element.querySelector('img');
-    if (img && img.src) {
-        const modal = document.getElementById('imgModal');
-        const modalImg = document.getElementById('modalImg');
-        if (modal && modalImg) {
-            modalImg.src = img.src;
-
-            const rect = element.getBoundingClientRect();
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-
-            const topPos = rect.top + scrollTop;
-            const leftPos = rect.left + scrollLeft;
-
-            modal.style.top = (topPos - 10) + 'px';
-            modal.style.left = (leftPos - 10) + 'px';
-            modal.style.display = 'block';
-        }
-    }
-}
-
-// 화면 아무 곳이나 누르면 팝업이 닫히도록 설정
-function closeModalOnBody(event) {
-    const modal = document.getElementById('imgModal');
-    if (modal && modal.style.display === 'block') {
-        modal.style.display = 'none';
-    }
+// 화면 빈 곳을 누르면 모든 이미지의 어두운 회색 하이라이트 해제
+function clearHighlights(event) {
+    document.querySelectorAll('.sample-box').forEach(b => b.classList.remove('highlighted'));
 }
 </script>
 
