@@ -192,7 +192,7 @@
             color: #5247D6;
             margin-bottom: 16px;
             margin-top: 4px;
-            font-weight: 700;
+5            font-weight: 700;
         }
 
         .form-subtext {
@@ -386,7 +386,7 @@
             border-top: 1px dashed #DDD;
         }
 
-        /* 1단락(이모티콘): 1:1 정사각형 비율 유지 */
+        /* 1단락(이모티콘): 1:1 정사각형 비율 */
         .grid-responsive {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
@@ -401,14 +401,14 @@
             object-fit: cover;
         }
 
-        /* 3단락(시그니처 & 기타): 가로 6개, 고정 비율 없이 이미지 원본 비율 그대로 반영 */
+        /* 시그니처 & 기타 (가로 6개) */
         .grid-six {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
             gap: 8px;
         }
         .grid-six .sample-box {
-            height: auto; /* 비율에 따라 높이가 유연하게 조절됨 */
+            height: auto;
             padding: 4px;
         }
         .grid-six .sample-box img {
@@ -418,7 +418,27 @@
             display: block;
         }
 
-        /* 2단락(방송화면 & 배너): 16:9 비율 유지 */
+        /* 채팅 아바타 전용 (가로 1개씩 세로로 큼직하게 나열) */
+        .grid-single {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+        .grid-single .sample-box {
+            width: 100%;
+            height: auto;
+            max-height: 500px;
+            padding: 10px;
+        }
+        .grid-single .sample-box img {
+            width: 100%;
+            height: auto;
+            max-height: 480px;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* 방송화면 & 배너 (16:9 비율) */
         .grid-wide {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -701,10 +721,11 @@
                 <div class="grid-six more-content" id="more-ziptok"></div>
                 <button class="btn-more" id="btn-ziptok" onclick="toggleMore('more-ziptok', this)">더보기 ↓</button>
             </div>
+            <!-- 채팅 아바타 탭: grid-single 적용으로 1개씩 세로 정렬 -->
             <div class="tab-panel">
                 <div class="header-group"><div class="price-text">개당 4.0</div></div>
-                <div class="grid-six" id="grid-avatar-main"></div>
-                <div class="grid-six more-content" id="more-avatar"></div>
+                <div class="grid-single" id="grid-avatar-main"></div>
+                <div class="grid-single more-content" id="more-avatar"></div>
                 <button class="btn-more" id="btn-avatar" onclick="toggleMore('more-avatar', this)">더보기 ↓</button>
             </div>
         </div>
