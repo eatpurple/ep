@@ -386,33 +386,54 @@
             border-top: 1px dashed #DDD;
         }
 
+        /* 1단락(이모티콘): 1:1 정사각형 비율 유지 */
         .grid-responsive {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
             gap: 8px;
         }
+        .grid-responsive .sample-box {
+            aspect-ratio: 1 / 1;
+        }
+        .grid-responsive .sample-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
+        /* 3단락(시그니처 & 기타): 가로 6개, 고정 비율 없이 이미지 원본 비율 그대로 반영 */
         .grid-six {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
             gap: 8px;
         }
-
-        .grid-responsive .sample-box, .grid-six .sample-box {
-            aspect-ratio: 1 / 1;
+        .grid-six .sample-box {
+            height: auto; /* 비율에 따라 높이가 유연하게 조절됨 */
+            padding: 4px;
+        }
+        .grid-six .sample-box img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            display: block;
         }
 
+        /* 2단락(방송화면 & 배너): 16:9 비율 유지 */
         .grid-wide {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 12px;
         }
-
         .grid-wide .sample-box {
             aspect-ratio: 16 / 9;
         }
+        .grid-wide .sample-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-        /* 샘플 박스 (클릭 시 순정 검은색 배경으로 변경) */
+        /* 샘플 박스 (클릭 시 순정 검은색 배경) */
         .sample-box {
             background-color: #F8F9FA;
             border-radius: 8px;
@@ -429,13 +450,6 @@
         .sample-box.highlighted {
             background-color: #000000 !important;
             border-color: #000000 !important;
-        }
-
-        /* 이미지가 네모칸 안에서 비율을 유지하며 꽉 차게 표시되도록 수정 (cover) */
-        .sample-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
         }
 
         .more-content {
