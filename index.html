@@ -192,7 +192,7 @@
             color: #5247D6;
             margin-bottom: 16px;
             margin-top: 4px;
-5            font-weight: 700;
+            font-weight: 700;
         }
 
         .form-subtext {
@@ -663,10 +663,17 @@
 
         <div class="tab-content-wrapper" id="content-group-2">
             <div class="tab-panel active">
-                <div class="header-group"><div class="price-text">A타입 개당 5.0</div></div>
+                <div class="header-group"><div class="price-text">A타입 (일반) 개당 5.0</div></div>
                 <div class="grid-wide" id="grid-screen-main"></div>
                 <div class="grid-wide more-content" id="more-screen"></div>
                 <button class="btn-more" id="btn-screen" onclick="toggleMore('more-screen', this)">더보기 ↓</button>
+
+                <div class="price-sub-section">
+                    <div class="header-group"><div class="price-text">A타입 (움짤) 개당 6.0</div></div>
+                    <div class="grid-wide" id="grid-screen-gif-main"></div>
+                    <div class="grid-wide more-content" id="more-screen-gif"></div>
+                    <button class="btn-more" id="btn-screen-gif" onclick="toggleMore('more-screen-gif', this)">더보기 ↓</button>
+                </div>
 
                 <div class="price-sub-section">
                     <div class="header-group"><div class="price-text">B타입 개당 3.0</div></div>
@@ -700,6 +707,7 @@
             <button class="tab-btn" onclick="switchTab('tab-group-3', 'content-group-3', 1); sendHeight();">후원움짤</button>
             <button class="tab-btn" onclick="switchTab('tab-group-3', 'content-group-3', 2); sendHeight();">짚톡</button>
             <button class="tab-btn" onclick="switchTab('tab-group-3', 'content-group-3', 3); sendHeight();">채팅 아바타</button>
+            <button class="tab-btn" onclick="switchTab('tab-group-3', 'content-group-3', 4); sendHeight();">그 외</button>
         </div>
 
         <div class="tab-content-wrapper" id="content-group-3">
@@ -721,12 +729,25 @@
                 <div class="grid-six more-content" id="more-ziptok"></div>
                 <button class="btn-more" id="btn-ziptok" onclick="toggleMore('more-ziptok', this)">더보기 ↓</button>
             </div>
-            <!-- 채팅 아바타 탭: grid-single 적용으로 1개씩 세로 정렬 -->
             <div class="tab-panel">
                 <div class="header-group"><div class="price-text">개당 4.0</div></div>
                 <div class="grid-single" id="grid-avatar-main"></div>
                 <div class="grid-single more-content" id="more-avatar"></div>
                 <button class="btn-more" id="btn-avatar" onclick="toggleMore('more-avatar', this)">더보기 ↓</button>
+            </div>
+            <!-- 새로 추가된 '그 외' 탭 (이미지 / 움짤 칸 분리) -->
+            <div class="tab-panel">
+                <div class="header-group"><div class="price-text">그 외 (이미지)</div></div>
+                <div class="grid-six" id="grid-other-img-main"></div>
+                <div class="grid-six more-content" id="more-other-img"></div>
+                <button class="btn-more" id="btn-other-img" onclick="toggleMore('more-other-img', this)">더보기 ↓</button>
+
+                <div class="price-sub-section">
+                    <div class="header-group"><div class="price-text">그 외 (움짤)</div></div>
+                    <div class="grid-six" id="grid-other-gif-main"></div>
+                    <div class="grid-six more-content" id="more-other-gif"></div>
+                    <button class="btn-more" id="btn-other-gif" onclick="toggleMore('more-other-gif', this)">더보기 ↓</button>
+                </div>
             </div>
         </div>
     </div>
@@ -738,7 +759,7 @@ document.addEventListener('dragstart', function(e) { e.preventDefault(); }, fals
 const config = {
     defaultShowCount: 10,
     items: [
-        { mainId: 'grid-texticon-main', moreId: 'more-texticon', btnId: 'btn-texticon', path: 'img/texticon', count: 10, ext: 'PNG' },
+        { mainId: 'grid-texticon-main', moreId: 'more-texticon', btnId: 'btn-texticon', path: 'img/texticon', count: 12, ext: 'PNG' },
         { mainId: 'grid-texticon-gif-main', moreId: 'more-texticon-gif', btnId: 'btn-texticon-gif', path: 'img/texticon_gif', count: 10, ext: 'GIF' },
         { mainId: 'grid-subicon-main', moreId: 'more-subicon', btnId: 'btn-subicon', path: 'img/subicon', count: 185, ext: 'PNG' },
 
@@ -746,10 +767,11 @@ const config = {
         { mainId: 'grid-gificon-basic-main', moreId: 'more-gificon-basic', btnId: 'btn-gificon-basic', path: 'img/gifcon_basic', count: 92, ext: 'GIF' },
         { mainId: 'grid-gificon-complex-main', moreId: 'more-gificon-complex', btnId: 'btn-gificon-complex', path: 'img/gifcon_complex', count: 27, ext: 'GIF' },
 
-        { mainId: 'grid-badge-main', moreId: 'more-badge', btnId: 'btn-badge', path: 'img/badge', count: 7, ext: 'PNG' },
+        { mainId: 'grid-badge-main', moreId: 'more-badge', btnId: 'btn-badge', path: 'img/badge', count: 12, ext: 'PNG' },
         { mainId: 'grid-ogq-main', moreId: 'more-ogq', btnId: 'btn-ogq', path: 'img/ogq', count: 0, ext: 'PNG' },
 
         { mainId: 'grid-screen-main', moreId: 'more-screen', btnId: 'btn-screen', path: 'img/screen', count: 8, ext: 'PNG' },
+        { mainId: 'grid-screen-gif-main', moreId: 'more-screen-gif', btnId: 'btn-screen-gif', path: 'img/screen_gif', count: 5, ext: 'GIF' },
         { mainId: 'grid-screen-b-main', moreId: 'more-screen-b', btnId: 'btn-screen-b', path: 'img/screen_b', count: 4, ext: 'PNG' },
         { mainId: 'grid-topbanner-main', moreId: 'more-topbanner', btnId: 'btn-topbanner', path: 'img/topbanner', count: 0, ext: 'PNG' },
         { mainId: 'grid-botbanner-main', moreId: 'more-botbanner', btnId: 'btn-botbanner', path: 'img/botbanner', count: 0, ext: 'PNG' },
@@ -757,7 +779,9 @@ const config = {
         { mainId: 'grid-balloon-main', moreId: 'more-balloon', btnId: 'btn-balloon', path: 'img/balloon', count: 51, ext: 'PNG' },
         { mainId: 'grid-gifanim-main', moreId: 'more-gifanim', btnId: 'btn-gifanim', path: 'img/gifanim', count: 16, ext: 'GIF' },
         { mainId: 'grid-ziptok-main', moreId: 'more-ziptok', btnId: 'btn-ziptok', path: 'img/ziptok', count: 10, ext: 'GIF' },
-        { mainId: 'grid-avatar-main', moreId: 'more-avatar', btnId: 'btn-avatar', path: 'img/avatar', count: 5, ext: 'GIF' }
+        { mainId: 'grid-avatar-main', moreId: 'more-avatar', btnId: 'btn-avatar', path: 'img/avatar', count: 5, ext: 'GIF' },
+        { mainId: 'grid-other-img-main', moreId: 'more-other-img', btnId: 'btn-other-img', path: 'img/other_img', count: 6, ext: 'PNG' },
+        { mainId: 'grid-other-gif-main', moreId: 'more-other-gif', btnId: 'btn-other-gif', path: 'img/other_gif', count: 6, ext: 'GIF' }
     ]
 };
 
