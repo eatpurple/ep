@@ -444,6 +444,28 @@
             display: block;
         }
 
+        /* '그 외' 전용 (가로 2개씩 배치 + 다양한 비율 원본 자동 맞춤) */
+        .grid-four {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .grid-four .sample-box {
+            width: 100%;
+            height: auto;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .grid-four .sample-box img {
+            width: 100%;
+            height: auto;
+            max-height: 500px;
+            object-fit: contain;
+            display: block;
+        }
+
         /* 채팅 아바타 전용 (가로 1개씩 세로 정렬) */
         .grid-single {
             display: grid;
@@ -547,6 +569,7 @@
             .grid-responsive { grid-template-columns: repeat(5, 1fr); gap: 4px; }
             .badge-set-row { grid-template-columns: repeat(5, 1fr); gap: 4px; }
             .grid-six { grid-template-columns: repeat(3, 1fr); gap: 4px; }
+            .grid-four { grid-template-columns: 1fr; } /* 모바일에서는 1개씩 세로로 꽉 차게 정렬 */
             .profile-card { flex-direction: column; text-align: center; padding-top: 0; }
             .sparkle-profile-wrapper { margin-top: -50px; }
             .profile-info { padding-top: 0; }
@@ -590,11 +613,11 @@
             <li class="check-item">작업물의 저작권은 작가에게 있으며, 저작권 법에 위배되는 모든 사항은 불가합니다. (판매,2차 가공, 트레이싱, 도용, AI 등)</li>
             <li class="check-item">용도 외 사용 NO. 무단배포 NO. (이외의 사용 시 추가금이 있으니 결제 후 사용해주세요!)</li>
             <li class="check-item">완성본은 PNG(또는 GIF) 파일 형태로 해당 플랫폼 사이즈에 맞게 전달됩니다.</li>
-<li class="check-item">최종 완성본만 저장, 공개, 사용이 가능합니다.</li>
-<li class="check-item">타인의 일러스트를 가져와 그림체 동일하게 요청하시는 경우, 작업 거절을 하고 있습니다.</li>
-<li class="check-item">러프 컨펌은 의뢰자분이 원하는 바가 잘 반영되어 진행되고 있는지를 확인하는 단계입니다. (기존 신청사항과 거리가 먼 수정요청은 추가금이 발생합니다. 원하시는 부분은 미리 신청양식에 적어주세요!)</li>
-<li class="check-item">작가의 실수로 누락된 부분은 수정해드리니 말씀해주세요!</li>
-<li class="check-item">모든 작업물은 제 sns에 업로드 되거나 샘플로 쓰일 수 있습니다. (원치 않을 시 작업물 비공개를 추가해주세요.)</li>
+            <li class="check-item">최종 완성본만 저장, 공개, 사용이 가능합니다.</li>
+            <li class="check-item">타인의 일러스트를 가져와 그림체 동일하게 요청하시는 경우, 작업 거절을 하고 있습니다.</li>
+            <li class="check-item">러프 컨펌은 의뢰자분이 원하는 바가 잘 반영되어 진행되고 있는지를 확인하는 단계입니다. (기존 신청사항과 거리가 먼 수정요청은 추가금이 발생합니다. 원하시는 부분은 미리 신청양식에 적어주세요!)</li>
+            <li class="check-item">작가의 실수로 누락된 부분은 수정해드리니 말씀해주세요!</li>
+            <li class="check-item">모든 작업물은 제 sns에 업로드 되거나 샘플로 쓰일 수 있습니다. (원치 않을 시 작업물 비공개를 추가해주세요.)</li>
         </ul>
     </div>
 
@@ -604,9 +627,8 @@
         <div class="form-list">
             <div class="form-item"><span class="form-num">1.</span><span class="form-input-placeholder">방송플랫폼 / 닉네임(활동명) / 채널링크 :</span></div>
             <div class="form-item"><span class="form-num">2.</span><span class="form-input-placeholder">신청타입 및 개수 :</span></div>
-<div class="form-item"><span class="form-num">3.</span><span class="form-input-placeholder">캐릭터 사진 (얼굴 사진+전신 스타일) 사진 :</span></div>
+            <div class="form-item"><span class="form-num">3.</span><span class="form-input-placeholder">캐릭터 사진 (얼굴 사진+전신 스타일) 사진 :</span></div>
             <div class="form-item"><span class="form-num">4.</span><span class="form-input-placeholder">참고 이미지 및 요청사항 :</span></div>
-           
         </div>
     </div>
 
@@ -674,7 +696,7 @@
                 </div>
             </div>
 
-            <!-- 뱃지 탭: 의뢰건별 점선 구분 적용 -->
+            <!-- 뱃지 탭 -->
             <div class="tab-panel">
                 <div class="header-group"><div class="price-text">개당 1.0</div></div>
                 <div class="badge-set-wrapper" id="grid-badge-main"></div>
@@ -774,6 +796,7 @@
                 <div class="grid-single more-content" id="more-avatar"></div>
                 <button class="btn-more" id="btn-avatar" onclick="toggleMore('more-avatar', this)">더보기 ↓</button>
             </div>
+            <!-- 그 외 탭 (가로 2개씩 배치 + 원본 비율 자동 맞춤) -->
             <div class="tab-panel">
                 <div class="header-group"><div class="price-text">그 외 (이미지)</div></div>
                 <div class="grid-four" id="grid-other-img-main"></div>
@@ -805,14 +828,13 @@ const config = {
         { mainId: 'grid-gificon-basic-main', moreId: 'more-gificon-basic', btnId: 'btn-gificon-basic', path: 'img/gifcon_basic', count: 92, ext: 'GIF' },
         { mainId: 'grid-gificon-complex-main', moreId: 'more-gificon-complex', btnId: 'btn-gificon-complex', path: 'img/gifcon_complex', count: 27, ext: 'GIF' },
 
-        /* 뱃지 전용 설정: 의뢰 건별 이미지 개수 배열 (예: 첫 의뢰인 10개, 두번째 6개, 세번째 4개 ...) */
         { 
             mainId: 'grid-badge-main', 
             moreId: 'more-badge', 
             btnId: 'btn-badge', 
             path: 'img/badge', 
-            badgeSets: [10, 6, 4], // 💡 의뢰 건별 개수를 나열해주시면 됩니다! (기존 이미지 파일명은 1.png부터 순서대로 쭉 저장)
-            defaultShowSets: 2,    // 기본으로 보여줄 의뢰 건수 (2세트 보여주고 더보기)
+            badgeSets: [10, 6, 4], 
+            defaultShowSets: 2,    
             ext: 'PNG' 
         },
 
@@ -874,7 +896,6 @@ function loadImagesDirect() {
         mainContainer.innerHTML = '';
         if (moreContainer) moreContainer.innerHTML = '';
 
-        /* 뱃지 탭을 위한 세트 단위 별도 로직 */
         if (item.badgeSets) {
             let currentImgIndex = 1;
             const defaultSets = item.defaultShowSets || 2;
@@ -899,7 +920,6 @@ function loadImagesDirect() {
                 btnMore.style.display = (item.badgeSets.length > defaultSets) ? 'block' : 'none';
             }
         } 
-        /* 일반 항목 로직 */
         else {
             for (let i = 1; i <= item.count; i++) {
                 const targetContainer = (i <= config.defaultShowCount) ? mainContainer : moreContainer;
