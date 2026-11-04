@@ -401,6 +401,32 @@
             object-fit: cover;
         }
 
+        /* 뱃지 전용 세트 컨테이너 (의뢰건별 아래로 줄바꿈 + 하단 점선 구분선) */
+        .badge-set-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .badge-set-row {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 8px;
+            padding-bottom: 16px;
+            border-bottom: 1.5px dashed #C8C2FC;
+        }
+        .badge-set-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .badge-set-row .sample-box {
+            aspect-ratio: 1 / 1;
+        }
+        .badge-set-row .sample-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         /* 시그니처 & 기타 (가로 6개) */
         .grid-six {
             display: grid;
@@ -418,7 +444,7 @@
             display: block;
         }
 
-        /* 채팅 아바타 전용 (가로 1개씩 세로로 큼직하게 나열) */
+        /* 채팅 아바타 전용 (가로 1개씩 세로 정렬) */
         .grid-single {
             display: grid;
             grid-template-columns: 1fr;
@@ -480,6 +506,10 @@
         .more-content.show {
             display: grid;
         }
+        
+        .more-content.show-flex {
+            display: flex;
+        }
 
         .btn-more {
             display: block;
@@ -509,11 +539,13 @@
 
         @media (max-width: 900px) {
             .grid-responsive { grid-template-columns: repeat(8, 1fr); }
+            .badge-set-row { grid-template-columns: repeat(8, 1fr); }
             .grid-six { grid-template-columns: repeat(5, 1fr); }
         }
 
         @media (max-width: 600px) {
             .grid-responsive { grid-template-columns: repeat(5, 1fr); gap: 4px; }
+            .badge-set-row { grid-template-columns: repeat(5, 1fr); gap: 4px; }
             .grid-six { grid-template-columns: repeat(3, 1fr); gap: 4px; }
             .profile-card { flex-direction: column; text-align: center; padding-top: 0; }
             .sparkle-profile-wrapper { margin-top: -50px; }
@@ -636,11 +668,12 @@
                 </div>
             </div>
 
+            <!-- 뱃지 탭: 의뢰건별 점선 구분 적용 -->
             <div class="tab-panel">
                 <div class="header-group"><div class="price-text">개당 1.0</div></div>
-                <div class="grid-responsive" id="grid-badge-main"></div>
-                <div class="grid-responsive more-content" id="more-badge"></div>
-                <button class="btn-more" id="btn-badge" onclick="toggleMore('more-badge', this)">더보기 ↓</button>
+                <div class="badge-set-wrapper" id="grid-badge-main"></div>
+                <div class="badge-set-wrapper more-content" id="more-badge"></div>
+                <button class="btn-more" id="btn-badge" onclick="toggleMore('more-badge', this, true)">더보기 ↓</button>
             </div>
 
             <div class="tab-panel">
@@ -735,7 +768,6 @@
                 <div class="grid-single more-content" id="more-avatar"></div>
                 <button class="btn-more" id="btn-avatar" onclick="toggleMore('more-avatar', this)">더보기 ↓</button>
             </div>
-            <!-- 새로 추가된 '그 외' 탭 (이미지 / 움짤 칸 분리) -->
             <div class="tab-panel">
                 <div class="header-group"><div class="price-text">그 외 (이미지)</div></div>
                 <div class="grid-six" id="grid-other-img-main"></div>
@@ -767,7 +799,17 @@ const config = {
         { mainId: 'grid-gificon-basic-main', moreId: 'more-gificon-basic', btnId: 'btn-gificon-basic', path: 'img/gifcon_basic', count: 92, ext: 'GIF' },
         { mainId: 'grid-gificon-complex-main', moreId: 'more-gificon-complex', btnId: 'btn-gificon-complex', path: 'img/gifcon_complex', count: 27, ext: 'GIF' },
 
-        { mainId: 'grid-badge-main', moreId: 'more-badge', btnId: 'btn-badge', path: 'img/badge', count: 12, ext: 'PNG' },
+        /* 뱃지 전용 설정: 의뢰 건별 이미지 개수 배열 (예: 첫 의뢰인 10개, 두번째 6개, 세번째 4개 ...) */
+        { 
+            mainId: 'grid-badge-main', 
+            moreId: 'more-badge', 
+            btnId: 'btn-badge', 
+            path: 'img/badge', 
+            badgeSets: [10, 6, 4], // 💡 의뢰 건별 개수를 나열해주시면 됩니다! (기존 이미지 파일명은 1.png부터 순서대로 쭉 저장)
+            defaultShowSets: 2,    // 기본으로 보여줄 의뢰 건수 (2세트 보여주고 더보기)
+            ext: 'PNG' 
+        },
+
         { mainId: 'grid-ogq-main', moreId: 'more-ogq', btnId: 'btn-ogq', path: 'img/ogq', count: 0, ext: 'PNG' },
 
         { mainId: 'grid-screen-main', moreId: 'more-screen', btnId: 'btn-screen', path: 'img/screen', count: 8, ext: 'PNG' },
@@ -785,6 +827,37 @@ const config = {
     ]
 };
 
+function createSampleBox(item, imgIndex) {
+    const box = document.createElement('div');
+    box.className = 'sample-box';
+    
+    box.onclick = function(e) { 
+        e.stopPropagation();
+        document.querySelectorAll('.sample-box').forEach(b => b.classList.remove('highlighted'));
+        box.classList.add('highlighted');
+    };
+
+    const imgTag = document.createElement('img');
+    const primaryExt = item.ext.toUpperCase();
+    const fallbackExt = item.ext.toLowerCase();
+
+    imgTag.src = `./${item.path}/${imgIndex}.${primaryExt}`;
+    imgTag.loading = "lazy";
+    imgTag.setAttribute('oncontextmenu', 'return false;');
+    imgTag.setAttribute('ondragstart', 'return false;');
+
+    imgTag.onerror = function() {
+        if (this.src.endsWith('.' + primaryExt)) {
+            this.src = `./${item.path}/${imgIndex}.${fallbackExt}`;
+        } else {
+            this.onerror = null;
+        }
+    };
+
+    box.appendChild(imgTag);
+    return box;
+}
+
 function loadImagesDirect() {
     config.items.forEach(item => {
         const mainContainer = document.getElementById(item.mainId);
@@ -795,42 +868,44 @@ function loadImagesDirect() {
         mainContainer.innerHTML = '';
         if (moreContainer) moreContainer.innerHTML = '';
 
-        for (let i = 1; i <= item.count; i++) {
-            const targetContainer = (i <= config.defaultShowCount) ? mainContainer : moreContainer;
-            if (!targetContainer) continue;
+        /* 뱃지 탭을 위한 세트 단위 별도 로직 */
+        if (item.badgeSets) {
+            let currentImgIndex = 1;
+            const defaultSets = item.defaultShowSets || 2;
 
-            const box = document.createElement('div');
-            box.className = 'sample-box';
-            
-            box.onclick = function(e) { 
-                e.stopPropagation();
-                document.querySelectorAll('.sample-box').forEach(b => b.classList.remove('highlighted'));
-                box.classList.add('highlighted');
-            };
+            item.badgeSets.forEach((setSize, setIdx) => {
+                const targetContainer = (setIdx < defaultSets) ? mainContainer : moreContainer;
+                if (!targetContainer) return;
 
-            const imgTag = document.createElement('img');
-            const primaryExt = item.ext.toUpperCase();
-            const fallbackExt = item.ext.toLowerCase();
+                const row = document.createElement('div');
+                row.className = 'badge-set-row';
 
-            imgTag.src = `./${item.path}/${i}.${primaryExt}`;
-            imgTag.loading = "lazy";
-            imgTag.setAttribute('oncontextmenu', 'return false;');
-            imgTag.setAttribute('ondragstart', 'return false;');
-
-            imgTag.onerror = function() {
-                if (this.src.endsWith('.' + primaryExt)) {
-                    this.src = `./${item.path}/${i}.${fallbackExt}`;
-                } else {
-                    this.onerror = null;
+                for (let i = 0; i < setSize; i++) {
+                    const box = createSampleBox(item, currentImgIndex);
+                    row.appendChild(box);
+                    currentImgIndex++;
                 }
-            };
 
-            box.appendChild(imgTag);
-            targetContainer.appendChild(box);
-        }
+                targetContainer.appendChild(row);
+            });
 
-        if (btnMore) {
-            btnMore.style.display = (item.count > config.defaultShowCount) ? 'block' : 'none';
+            if (btnMore) {
+                btnMore.style.display = (item.badgeSets.length > defaultSets) ? 'block' : 'none';
+            }
+        } 
+        /* 일반 항목 로직 */
+        else {
+            for (let i = 1; i <= item.count; i++) {
+                const targetContainer = (i <= config.defaultShowCount) ? mainContainer : moreContainer;
+                if (!targetContainer) continue;
+
+                const box = createSampleBox(item, i);
+                targetContainer.appendChild(box);
+            }
+
+            if (btnMore) {
+                btnMore.style.display = (item.count > config.defaultShowCount) ? 'block' : 'none';
+            }
         }
     });
 
@@ -861,11 +936,12 @@ function switchTab(groupId, contentId, index) {
     sendHeight();
 }
 
-function toggleMore(id, btn) {
+function toggleMore(id, btn, isFlex = false) {
     const target = document.getElementById(id);
     if (!target) return;
 
-    const isShow = target.classList.toggle('show');
+    const showClass = isFlex ? 'show-flex' : 'show';
+    const isShow = target.classList.toggle(showClass);
     if (btn) btn.innerText = isShow ? '접기 ↑' : '더보기 ↓';
     sendHeight();
 }
